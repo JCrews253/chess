@@ -1,0 +1,15 @@
+.Board__container{
+    margin: auto;
+    width: 50vw;
+    height: 50vw;
+    display: grid;
+    grid-template-columns: auto auto auto auto auto auto auto auto;
+    border: solid 3px orange;
+}
+
+.space{
+    height: auto;
+    width: auto;
+    background-color: aqua;
+    border: solid 1px black;
+}
