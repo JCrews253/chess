@@ -1,3 +1,4 @@
 .app{
-  border: solid 1px green;
+  display: grid;
+  align-content: center;
 }

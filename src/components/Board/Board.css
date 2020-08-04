@@ -1,15 +1,76 @@
 .Board__container{
     margin: auto;
-    width: 50vw;
-    height: 50vw;
     display: grid;
-    grid-template-columns: auto auto auto auto auto auto auto auto;
-    border: solid 3px orange;
+    grid-template-columns: repeat(8,auto);
+    grid-template-rows: repeat(8,auto);
 }
 
-.space{
-    height: auto;
-    width: auto;
-    background-color: aqua;
-    border: solid 1px black;
+.Board__space{
+    height: 5em;
+    width: 5em;
+}
+.Board__space:hover{
+    transform: scale(1.01);
+}
+
+.Board__spaceLight{
+    background-color: #D8DEE9;
+}
+.Board__spaceDark{
+    background-color: #2E3440;
+}
+.Board__king-dark{
+    content: url('../../images/pieces/b_king.png');
+    object-fit: contain;
+}
+.Board__queen-dark{
+    content: url('../../images/pieces/b_queen.png');
+    object-fit: contain;
+}
+.Board__bishop-dark{
+    content: url('../../images/pieces/b_bishop.png');
+    object-fit: contain;
+}
+.Board__knight-dark{
+    content: url('../../images/pieces/b_knight.png');
+    object-fit: contain;
+}
+.Board__rook-dark{
+    content: url('../../images/pieces/b_rook.png');
+    object-fit: contain;
+}
+.Board__pawn-dark{
+    content: url('../../images/pieces/b_pawn.png');
+    object-fit: contain;
+}
+.Board__king-light{
+    content: url('../../images/pieces/w_king.png');
+    object-fit: contain;
+}
+.Board__queen-light{
+    content: url('../../images/pieces/w_queen.png');
+    object-fit: contain;
+}
+.Board__bishop-light{
+    content: url('../../images/pieces/w_bishop.png');
+    object-fit: contain;
+}
+.Board__knight-light{
+    content: url('../../images/pieces/w_knight.png');
+    object-fit: contain;
+}
+.Board__rook-light{
+    content: url('../../images/pieces/w_rook.png');
+    object-fit: contain;
+}
+.Board__pawn-light{
+    content: url('../../images/pieces/w_pawn.png');
+    object-fit: contain;
+}
+
+.Board__Selected{
+    background-color: #88C0D0;
+}
+.Board__AvailableMove{
+    background-color: #5E81AC;
 }
