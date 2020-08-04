@@ -105,7 +105,7 @@ const Board = () => {
 
     const FilterAvailableMoves = (array:number[][],idx:number) => {
         const isdark = !isLightPiece(idx)
-        const availableMoves = array.filter(e => (e[0] > -1 && e[0] < 8 && e[1] > -1 && e[1] < 8))
+        const availableMoves = array.filter(e => (e[0] > -1 && e[0] < 8 && e[1] > -1 && e[1] < 8 && board[idx].color === Color.light))
         var convertedToIdx:number[] = []
         var killingMoves:number[] = []
         availableMoves.forEach(e => convertedToIdx.push(GetIdxByRowCol(e[0],e[1])))
@@ -120,7 +120,7 @@ const Board = () => {
         setKillingMoves(killingMoves)
     }
 
-
+    const[turn,setTurn]=useState(Color.light)
     const[board,setBoard] = useState( () => InitializeBoard())
     const[selected,SetSelected] = useState(-1)
     const[availableMoves, setAvailableMoves] = useState([-1])

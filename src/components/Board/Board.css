@@ -8,6 +8,7 @@
 .Board__space{
     height: 5em;
     width: 5em;
+    -webkit-user-select: none;
 }
 .Board__space:hover{
     transform: scale(1.01);
