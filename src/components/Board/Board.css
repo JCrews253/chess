@@ -74,3 +74,6 @@
 .Board__AvailableMove{
     background-color: #5E81AC;
 }
+.Board__KillingMove{
+    background-color: #BF616A;
+}
