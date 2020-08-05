@@ -47,7 +47,7 @@ const Board = () => {
         newBoard[61] = {piece: Piece.bishop, color: Color.light, firstMove: true}
         newBoard[62] = {piece: Piece.knight, color: Color.light, firstMove: true}
         newBoard[63] = {piece: Piece.rook, color: Color.light, firstMove: true}
-        //for(let i=49; i<56; i++) newBoard[i] = {piece: Piece.pawn, color: Color.light, firstMove: true}
+        for(let i=49; i<56; i++) newBoard[i] = {piece: Piece.pawn, color: Color.light, firstMove: true}
         return newBoard
     }
     const GetRow = (idx:number):number => Math.floor( idx / 8 )
@@ -69,7 +69,10 @@ const Board = () => {
 
         if(availableMoves.includes(idx) && board[idx].piece === Piece.empty){
             const newBoard = [...board]
-            newBoard[idx] = newBoard[selected]
+            newBoard[idx] = {
+                ...newBoard[selected],
+                firstMove: false
+            }
             newBoard[selected] = {
                 piece: Piece.empty,
                 color: Color.none
@@ -78,18 +81,23 @@ const Board = () => {
             setKillingMoves([])
             SetSelected(-1)
             setBoard(newBoard)
+            SwapTurns()
         }
         else if(availableMoves.includes(idx)){
             const newBoard = [...board]
-            
-            newBoard[idx] = newBoard[selected]
+            newBoard[idx] = {
+                ...newBoard[selected],
+                firstMove: false
+            }
             newBoard[selected] = {
                 piece: Piece.empty,
+                color: Color.none
             }
             setAvailableMoves([])
             setKillingMoves([])
             SetSelected(-1)
             setBoard(newBoard)
+            SwapTurns()
         }
         else{
             SetSelected(idx)
@@ -172,8 +180,8 @@ const Board = () => {
         if(cRow - 1 > 0 && cCol + 1 < 8 && board[GetIdxByRowCol(cRow-1,cCol+1)].color !== turn) moves.push(GetIdxByRowCol(cRow-1,cCol+1))
         
         //Down Right
-        var cRow = row
-        var cCol = col
+        cRow = row
+        cCol = col
         while(cRow + 1 < 8 && cCol + 1 < 8 && board[GetIdxByRowCol(cRow+1,cCol+1)].piece === Piece.empty){
             moves.push(GetIdxByRowCol(cRow+1,cCol+1))
             cRow++
@@ -182,8 +190,8 @@ const Board = () => {
         if(cRow + 1 < 8 && cCol + 1 < 8 && board[GetIdxByRowCol(cRow+1,cCol+1)].color !== turn) moves.push(GetIdxByRowCol(cRow+1,cCol+1))
 
         //Down Left
-        var cRow = row
-        var cCol = col
+        cRow = row
+        cCol = col
         while(cRow + 1 < 8 && cCol - 1 > -1 && board[GetIdxByRowCol(cRow+1,cCol-1)].piece === Piece.empty){
             moves.push(GetIdxByRowCol(cRow+1,cCol-1))
             cRow++
@@ -192,8 +200,8 @@ const Board = () => {
         if(cRow + 1 < 8 && cCol - 1 > -1 && board[GetIdxByRowCol(cRow+1,cCol-1)].color !== turn) moves.push(GetIdxByRowCol(cRow+1,cCol-1))
 
         //Up Left
-        var cRow = row
-        var cCol = col
+        cRow = row
+        cCol = col
         while(cRow - 1 > -1 && cCol - 1 > -1 && board[GetIdxByRowCol(cRow-1,cCol-1)].piece === Piece.empty){
             moves.push(GetIdxByRowCol(cRow-1,cCol-1))
             cRow--
@@ -210,16 +218,16 @@ const Board = () => {
         //Up Right
         var cRow = row
         var cCol = col
-        while(cRow - 1 > 0 && cCol + 1 < 8 && board[GetIdxByRowCol(cRow-1,cCol+1)].piece === Piece.empty){
+        while(cRow - 1 > -1 && cCol + 1 < 8 && board[GetIdxByRowCol(cRow-1,cCol+1)].piece === Piece.empty){
             moves.push(GetIdxByRowCol(cRow-1,cCol+1))
             cRow--
             cCol++
         }
-        if(cRow - 1 > 0 && cCol + 1 < 8 && board[GetIdxByRowCol(cRow-1,cCol+1)].color !== turn) moves.push(GetIdxByRowCol(cRow-1,cCol+1))
+        if(cRow - 1 > -1 && cCol + 1 < 8 && board[GetIdxByRowCol(cRow-1,cCol+1)].color !== turn) moves.push(GetIdxByRowCol(cRow-1,cCol+1))
         
         //Down Right
-        var cRow = row
-        var cCol = col
+        cRow = row
+        cCol = col
         while(cRow + 1 < 8 && cCol + 1 < 8 && board[GetIdxByRowCol(cRow+1,cCol+1)].piece === Piece.empty){
             moves.push(GetIdxByRowCol(cRow+1,cCol+1))
             cRow++
@@ -228,8 +236,8 @@ const Board = () => {
         if(cRow + 1 < 8 && cCol + 1 < 8 && board[GetIdxByRowCol(cRow+1,cCol+1)].color !== turn) moves.push(GetIdxByRowCol(cRow+1,cCol+1))
 
         //Down Left
-        var cRow = row
-        var cCol = col
+        cRow = row
+        cCol = col
         while(cRow + 1 < 8 && cCol - 1 > -1 && board[GetIdxByRowCol(cRow+1,cCol-1)].piece === Piece.empty){
             moves.push(GetIdxByRowCol(cRow+1,cCol-1))
             cRow++
@@ -238,8 +246,8 @@ const Board = () => {
         if(cRow + 1 < 8 && cCol - 1 > -1 && board[GetIdxByRowCol(cRow+1,cCol-1)].color !== turn) moves.push(GetIdxByRowCol(cRow+1,cCol-1))
 
         //Up Left
-        var cRow = row
-        var cCol = col
+        cRow = row
+        cCol = col
         while(cRow - 1 > -1 && cCol - 1 > -1 && board[GetIdxByRowCol(cRow-1,cCol-1)].piece === Piece.empty){
             moves.push(GetIdxByRowCol(cRow-1,cCol-1))
             cRow--
@@ -248,7 +256,7 @@ const Board = () => {
         if(cRow - 1 > -1 && cCol - 1 > -1 && board[GetIdxByRowCol(cRow-1,cCol-1)].color !== turn) moves.push(GetIdxByRowCol(cRow-1,cCol-1))
 
         //up
-        var cRow = row
+        cRow = row
         while((cRow - 1 > -1 ) && board[GetIdxByRowCol(cRow-1,col)].piece === Piece.empty){
             moves.push(GetIdxByRowCol(cRow-1,col))
             cRow--
@@ -256,7 +264,7 @@ const Board = () => {
         if(cRow > 0 && board[GetIdxByRowCol(cRow-1,col)].color !== turn) moves.push(GetIdxByRowCol(cRow-1,col))
 
         //Right
-        var cCol = col
+        cCol = col
         while((cCol + 1 < 8 && board[GetIdxByRowCol(row,cCol+1)].piece === Piece.empty)){
             moves.push(GetIdxByRowCol(row,cCol+1))
             cCol++
@@ -283,14 +291,44 @@ const Board = () => {
         FilterAvailableMoves(moves,idx)
     }
     const ShowKingMoves = (idx:number) => {
-        
+        const row = GetRow(idx)
+        const col = GetCol(idx)      
+        const moves:number[] = []
+        if(row > 0) moves.push(GetIdxByRowCol(row-1,col)) //up
+        if(row > 0 && col < 7) moves.push(GetIdxByRowCol(row-1,col+1)) //up right
+        if(col < 7) moves.push(GetIdxByRowCol(row,col+1)) //right
+        if(row < 7 && col < 7) moves.push(GetIdxByRowCol(row+1,col+1)) //down right
+        if(row < 7) moves.push(GetIdxByRowCol(row+1,col)) //down
+        if(row < 7 && col > 0) moves.push(GetIdxByRowCol(row+1,col-1)) //down left
+        if(col > 0) moves.push(GetIdxByRowCol(row,col-1)) //left
+        if(row > 0 && col > 0) moves.push(GetIdxByRowCol(row-1,col-1)) //up left
+
+        //castling
+
+        FilterAvailableMoves(moves,idx)
     }
     const ShowPawnMoves = (idx:number) => {
-        
+        const row = GetRow(idx)
+        const col = GetCol(idx)
+        const isFirst = board[idx].firstMove      
+        const moves:number[] = []
+        if(board[idx].color === Color.light){
+            if(board[GetIdxByRowCol(row-1,col)].piece === Piece.empty) moves.push(GetIdxByRowCol(row-1,col))
+            if(isFirst && board[GetIdxByRowCol(row-1,col)].piece === Piece.empty) moves.push(GetIdxByRowCol(row-2,col))
+            if(board[GetIdxByRowCol(row-1,col+1)].piece !== Piece.empty) moves.push(GetIdxByRowCol(row-1,col+1))
+            if(board[GetIdxByRowCol(row-1,col-1)].piece !== Piece.empty) moves.push(GetIdxByRowCol(row-1,col-1))
+        }
+        else{
+            if(board[GetIdxByRowCol(row+1,col)].piece === Piece.empty) moves.push(GetIdxByRowCol(row+1,col))
+            if(isFirst && board[GetIdxByRowCol(row+1,col)].piece === Piece.empty) moves.push(GetIdxByRowCol(row+2,col))
+            if(board[GetIdxByRowCol(row+1,col+1)].piece !== Piece.empty) moves.push(GetIdxByRowCol(row+1,col+1))
+            if(board[GetIdxByRowCol(row+1,col-1)].piece !== Piece.empty) moves.push(GetIdxByRowCol(row+1,col-1))
+        }
+        FilterAvailableMoves(moves,idx)
     }
 
     const FilterAvailableMoves = (array:number[],idx:number) => {
-        var availableMoves = array.filter(() => board[idx].color === Color.light)
+        var availableMoves = array.filter(() => board[idx].color === turn)
         var killingMoves:number[] = []
         availableMoves = availableMoves.filter(p => {
             if(board[p].piece !== Piece.empty && isLightPiece(idx) === isLightPiece(p)){
