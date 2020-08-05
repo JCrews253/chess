@@ -1,5 +1,8 @@
 .Board__container{
     margin: auto;
+}
+.Board__gameboard{
+    margin: auto;
     display: grid;
     grid-template-columns: repeat(8,auto);
     grid-template-rows: repeat(8,auto);
@@ -9,6 +12,7 @@
     height: 5em;
     width: 5em;
     -webkit-user-select: none;
+    border: solid 1px black;
 }
 .Board__space:hover{
     transform: scale(1.01);

@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import './Board.css'
-import { kStringMaxLength } from 'buffer'
 
 interface boardArray{
     piece: Piece,
@@ -10,7 +9,8 @@ interface boardArray{
 
 enum Color{
     dark,
-    light
+    light,
+    none
 }
 
 enum Piece{
@@ -26,7 +26,7 @@ enum Piece{
 const Board = () => {
 
     const InitializeBoard = ():boardArray[] => {
-        let newBoard:boardArray[] = new Array(64).fill({piece: Piece.empty, color: Color.light, firstMove: true})
+        let newBoard:boardArray[] = new Array(64).fill({piece: Piece.empty, color: Color.none, firstMove: true})
         newBoard[0] = {piece: Piece.rook, color: Color.dark, firstMove: true}
         newBoard[1] = {piece: Piece.knight, color: Color.dark, firstMove: true}
         newBoard[2] = {piece: Piece.bishop, color: Color.dark, firstMove: true}
@@ -36,7 +36,7 @@ const Board = () => {
         newBoard[6] = {piece: Piece.knight, color: Color.dark, firstMove: true}
         newBoard[7] = {piece: Piece.rook, color: Color.dark, firstMove: true}
 
-        newBoard[42] = {piece: Piece.rook, color: Color.dark, firstMove: true}
+        newBoard[44] = {piece: Piece.rook, color: Color.dark, firstMove: true}
 
         for(let i=8; i<16; i++) newBoard[i] = {piece: Piece.pawn, color: Color.dark, firstMove: true}
         newBoard[56] = {piece: Piece.rook, color: Color.light, firstMove: true}
@@ -47,7 +47,7 @@ const Board = () => {
         newBoard[61] = {piece: Piece.bishop, color: Color.light, firstMove: true}
         newBoard[62] = {piece: Piece.knight, color: Color.light, firstMove: true}
         newBoard[63] = {piece: Piece.rook, color: Color.light, firstMove: true}
-        for(let i=48; i<56; i++) newBoard[i] = {piece: Piece.pawn, color: Color.light, firstMove: true}
+        //for(let i=49; i<56; i++) newBoard[i] = {piece: Piece.pawn, color: Color.light, firstMove: true}
         return newBoard
     }
     const GetRow = (idx:number):number => Math.floor( idx / 8 )
@@ -64,10 +64,24 @@ const Board = () => {
     const isSelected = (idx:number) => selected === idx
     const isAvailableMove = (idx:number) => availableMoves.includes(idx)
     const isKillingMove = (idx:number) => killingMoves.includes(idx)
+    const SwapTurns = () => setTurn((turn === Color.light) ? Color.dark : Color.light)
     const HandlePieceClick = (idx:number) => {
 
-        if(availableMoves.includes(idx)){
+        if(availableMoves.includes(idx) && board[idx].piece === Piece.empty){
             const newBoard = [...board]
+            newBoard[idx] = newBoard[selected]
+            newBoard[selected] = {
+                piece: Piece.empty,
+                color: Color.none
+            }
+            setAvailableMoves([])
+            setKillingMoves([])
+            SetSelected(-1)
+            setBoard(newBoard)
+        }
+        else if(availableMoves.includes(idx)){
+            const newBoard = [...board]
+            
             newBoard[idx] = newBoard[selected]
             newBoard[selected] = {
                 piece: Piece.empty,
@@ -82,41 +96,210 @@ const Board = () => {
             setAvailableMoves([])
             setKillingMoves([])
             if(isKnight(idx)) ShowKnightMoves(idx)
+            else if(isRook(idx)) ShowRookMoves(idx)
+            else if(isBishop(idx)) ShowBishopMoves(idx)
+            else if(isBishop(idx)) ShowBishopMoves(idx)
+            else if(isQueen(idx)) ShowQueenMoves(idx)
+            else if(isKing(idx)) ShowKingMoves(idx)
+            else if(isPawn(idx)) ShowPawnMoves(idx)
         }
     }
-
     const ShowKnightMoves = (idx: number) => {
         const row = GetRow(idx)
+        const col = GetCol(idx)      
+        const moves:number[] = []
+        if(row >= 2 && col <= 6) moves.push(GetIdxByRowCol(row-2,col+1))
+        if(row >= 1 && col <= 5) moves.push(GetIdxByRowCol(row-1,col+2))
+        if(row <= 6 && col <= 5) moves.push(GetIdxByRowCol(row+1,col+2))
+        if(row <= 5 && col <= 6) moves.push(GetIdxByRowCol(row+2,col+1))
+        if(row <= 5 && col >= 1) moves.push(GetIdxByRowCol(row+2,col-1))
+        if(row <= 6 && col >= 2) moves.push(GetIdxByRowCol(row+1,col-2))
+        if(row >= 1 && col >= 2) moves.push(GetIdxByRowCol(row-1,col-2))
+        if(row >= 2 && col >= 1) moves.push(GetIdxByRowCol(row-2,col-1))
+        FilterAvailableMoves(moves,idx)
+    }
+    const ShowRookMoves = (idx:number) => {
+        const row = GetRow(idx)
         const col = GetCol(idx)
+        const moves:number[] =[]
+        //up
+        var cRow = row
+        while((cRow - 1 > -1 ) && board[GetIdxByRowCol(cRow-1,col)].piece === Piece.empty){
+            moves.push(GetIdxByRowCol(cRow-1,col))
+            cRow--
+        }
+        if(cRow > 0 && board[GetIdxByRowCol(cRow-1,col)].color !== turn) moves.push(GetIdxByRowCol(cRow-1,col))
+
+        //Right
+        var cCol = col
+        while((cCol + 1 < 8 && board[GetIdxByRowCol(row,cCol+1)].piece === Piece.empty)){
+            moves.push(GetIdxByRowCol(row,cCol+1))
+            cCol++
+        }
+        if(cCol < 7 && board[GetIdxByRowCol(row,cCol + 1)].color !== turn) moves.push(GetIdxByRowCol(row,cCol+1))
+
+
+        //Down
+        cRow = row
+        while((cRow + 1 < 8 && board[GetIdxByRowCol(cRow+1,col)].piece === Piece.empty)){
+            moves.push(GetIdxByRowCol(cRow+1,col))
+            cRow++
+        }
+        if(cRow < 7 && board[GetIdxByRowCol(cRow+1,col)].color !== turn) moves.push(GetIdxByRowCol(cRow+1,col))
+
+        //Left
+        cCol = col
+        while((cCol - 1 > 0 && board[GetIdxByRowCol(row,cCol-1)].piece === Piece.empty)){
+            moves.push(GetIdxByRowCol(row,cCol-1))
+            cCol--
+        }
+        if(cCol > 0 && board[GetIdxByRowCol(row,cCol - 1)].color !== turn) moves.push(GetIdxByRowCol(row,cCol-1))
+
+        FilterAvailableMoves(moves,idx)
+    }
+    const ShowBishopMoves = (idx:number) => {
+        const row = GetRow(idx)
+        const col = GetCol(idx)      
+        const moves:number[] = []
+        //Up Right
+        var cRow = row
+        var cCol = col
+        while(cRow - 1 > 0 && cCol + 1 < 8 && board[GetIdxByRowCol(cRow-1,cCol+1)].piece === Piece.empty){
+            moves.push(GetIdxByRowCol(cRow-1,cCol+1))
+            cRow--
+            cCol++
+        }
+        if(cRow - 1 > 0 && cCol + 1 < 8 && board[GetIdxByRowCol(cRow-1,cCol+1)].color !== turn) moves.push(GetIdxByRowCol(cRow-1,cCol+1))
         
-        const KnightMoves:number[][] = [[]]
-        KnightMoves.push(
-            [row - 2, col - 1 ],
-            [row - 2, col + 1 ],
-            [row - 1, col - 2 ],
-            [row - 1, col + 2 ],
-            [row + 1, col - 2 ],
-            [row + 1, col + 2 ],
-            [row + 2, col - 1 ],
-            [row + 2, col + 1 ]
-            )
-        FilterAvailableMoves(KnightMoves,idx)
+        //Down Right
+        var cRow = row
+        var cCol = col
+        while(cRow + 1 < 8 && cCol + 1 < 8 && board[GetIdxByRowCol(cRow+1,cCol+1)].piece === Piece.empty){
+            moves.push(GetIdxByRowCol(cRow+1,cCol+1))
+            cRow++
+            cCol++
+        }
+        if(cRow + 1 < 8 && cCol + 1 < 8 && board[GetIdxByRowCol(cRow+1,cCol+1)].color !== turn) moves.push(GetIdxByRowCol(cRow+1,cCol+1))
+
+        //Down Left
+        var cRow = row
+        var cCol = col
+        while(cRow + 1 < 8 && cCol - 1 > -1 && board[GetIdxByRowCol(cRow+1,cCol-1)].piece === Piece.empty){
+            moves.push(GetIdxByRowCol(cRow+1,cCol-1))
+            cRow++
+            cCol--
+        }
+        if(cRow + 1 < 8 && cCol - 1 > -1 && board[GetIdxByRowCol(cRow+1,cCol-1)].color !== turn) moves.push(GetIdxByRowCol(cRow+1,cCol-1))
+
+        //Up Left
+        var cRow = row
+        var cCol = col
+        while(cRow - 1 > -1 && cCol - 1 > -1 && board[GetIdxByRowCol(cRow-1,cCol-1)].piece === Piece.empty){
+            moves.push(GetIdxByRowCol(cRow-1,cCol-1))
+            cRow--
+            cCol--
+        }
+        if(cRow - 1 > -1 && cCol - 1 > -1 && board[GetIdxByRowCol(cRow-1,cCol-1)].color !== turn) moves.push(GetIdxByRowCol(cRow-1,cCol-1))
+
+        FilterAvailableMoves(moves,idx)
+    }
+    const ShowQueenMoves = (idx:number) => {
+        const row = GetRow(idx)
+        const col = GetCol(idx)      
+        const moves:number[] = []
+        //Up Right
+        var cRow = row
+        var cCol = col
+        while(cRow - 1 > 0 && cCol + 1 < 8 && board[GetIdxByRowCol(cRow-1,cCol+1)].piece === Piece.empty){
+            moves.push(GetIdxByRowCol(cRow-1,cCol+1))
+            cRow--
+            cCol++
+        }
+        if(cRow - 1 > 0 && cCol + 1 < 8 && board[GetIdxByRowCol(cRow-1,cCol+1)].color !== turn) moves.push(GetIdxByRowCol(cRow-1,cCol+1))
+        
+        //Down Right
+        var cRow = row
+        var cCol = col
+        while(cRow + 1 < 8 && cCol + 1 < 8 && board[GetIdxByRowCol(cRow+1,cCol+1)].piece === Piece.empty){
+            moves.push(GetIdxByRowCol(cRow+1,cCol+1))
+            cRow++
+            cCol++
+        }
+        if(cRow + 1 < 8 && cCol + 1 < 8 && board[GetIdxByRowCol(cRow+1,cCol+1)].color !== turn) moves.push(GetIdxByRowCol(cRow+1,cCol+1))
+
+        //Down Left
+        var cRow = row
+        var cCol = col
+        while(cRow + 1 < 8 && cCol - 1 > -1 && board[GetIdxByRowCol(cRow+1,cCol-1)].piece === Piece.empty){
+            moves.push(GetIdxByRowCol(cRow+1,cCol-1))
+            cRow++
+            cCol--
+        }
+        if(cRow + 1 < 8 && cCol - 1 > -1 && board[GetIdxByRowCol(cRow+1,cCol-1)].color !== turn) moves.push(GetIdxByRowCol(cRow+1,cCol-1))
+
+        //Up Left
+        var cRow = row
+        var cCol = col
+        while(cRow - 1 > -1 && cCol - 1 > -1 && board[GetIdxByRowCol(cRow-1,cCol-1)].piece === Piece.empty){
+            moves.push(GetIdxByRowCol(cRow-1,cCol-1))
+            cRow--
+            cCol--
+        }
+        if(cRow - 1 > -1 && cCol - 1 > -1 && board[GetIdxByRowCol(cRow-1,cCol-1)].color !== turn) moves.push(GetIdxByRowCol(cRow-1,cCol-1))
+
+        //up
+        var cRow = row
+        while((cRow - 1 > -1 ) && board[GetIdxByRowCol(cRow-1,col)].piece === Piece.empty){
+            moves.push(GetIdxByRowCol(cRow-1,col))
+            cRow--
+        }
+        if(cRow > 0 && board[GetIdxByRowCol(cRow-1,col)].color !== turn) moves.push(GetIdxByRowCol(cRow-1,col))
+
+        //Right
+        var cCol = col
+        while((cCol + 1 < 8 && board[GetIdxByRowCol(row,cCol+1)].piece === Piece.empty)){
+            moves.push(GetIdxByRowCol(row,cCol+1))
+            cCol++
+        }
+        if(cCol < 7 && board[GetIdxByRowCol(row,cCol + 1)].color !== turn) moves.push(GetIdxByRowCol(row,cCol+1))
+
+
+        //Down
+        cRow = row
+        while((cRow + 1 < 8 && board[GetIdxByRowCol(cRow+1,col)].piece === Piece.empty)){
+            moves.push(GetIdxByRowCol(cRow+1,col))
+            cRow++
+        }
+        if(cRow < 7 && board[GetIdxByRowCol(cRow+1,col)].color !== turn) moves.push(GetIdxByRowCol(cRow+1,col))
+
+        //Left
+        cCol = col
+        while((cCol - 1 > 0 && board[GetIdxByRowCol(row,cCol-1)].piece === Piece.empty)){
+            moves.push(GetIdxByRowCol(row,cCol-1))
+            cCol--
+        }
+        if(cCol > 0 && board[GetIdxByRowCol(row,cCol - 1)].color !== turn) moves.push(GetIdxByRowCol(row,cCol-1))
+
+        FilterAvailableMoves(moves,idx)
+    }
+    const ShowKingMoves = (idx:number) => {
+        
+    }
+    const ShowPawnMoves = (idx:number) => {
+        
     }
 
-    const FilterAvailableMoves = (array:number[][],idx:number) => {
-        const isdark = !isLightPiece(idx)
-        const availableMoves = array.filter(e => (e[0] > -1 && e[0] < 8 && e[1] > -1 && e[1] < 8 && board[idx].color === Color.light))
-        var convertedToIdx:number[] = []
+    const FilterAvailableMoves = (array:number[],idx:number) => {
+        var availableMoves = array.filter(() => board[idx].color === Color.light)
         var killingMoves:number[] = []
-        availableMoves.forEach(e => convertedToIdx.push(GetIdxByRowCol(e[0],e[1])))
-        convertedToIdx = convertedToIdx.filter(p => {
+        availableMoves = availableMoves.filter(p => {
             if(board[p].piece !== Piece.empty && isLightPiece(idx) === isLightPiece(p)){
                 return false
             }
             else if(board[p].piece !== Piece.empty) killingMoves.push(p)  
             return true
         })
-        setAvailableMoves(convertedToIdx)
+        setAvailableMoves(availableMoves)
         setKillingMoves(killingMoves)
     }
 
@@ -132,23 +315,25 @@ const Board = () => {
 
     return(
         <div className='Board__container'>
-            {board.map( (_,idx) => {
-                return( 
-                <div className={[
-                    'Board__space',
-                    `${isLight(idx) ? 'Board__spaceLight' : 'Board__spaceDark'}`,
-                    `${isKing(idx) ? isLightPiece(idx) ? 'Board__king-light' : 'Board__king-dark' : '' }`,
-                    `${isQueen(idx) ? isLightPiece(idx) ? 'Board__queen-light' : 'Board__queen-dark' : '' }`,
-                    `${isBishop(idx) ? isLightPiece(idx) ? 'Board__bishop-light' : 'Board__bishop-dark' : '' }`,
-                    `${isKnight(idx) ? isLightPiece(idx) ? 'Board__knight-light' : 'Board__knight-dark' : '' }`,
-                    `${isRook(idx) ? isLightPiece(idx) ? 'Board__rook-light' : 'Board__rook-dark' : '' }`,
-                    `${isPawn(idx) ? isLightPiece(idx) ? 'Board__pawn-light' : 'Board__pawn-dark' : '' }`,
-                    `${isSelected(idx) && 'Board__Selected'}`,
-                    `${isAvailableMove(idx) && 'Board__AvailableMove'}`,
-                    `${isKillingMove(idx) && 'Board__KillingMove'}`
-                ].join(" ")}
-                onClick={() => HandlePieceClick(idx)}>{idx}</div>)
-            })}
+            <div className='Board__gameboard'>
+                {board.map( (_,idx) => {
+                    return( 
+                    <div className={[
+                        'Board__space',
+                        `${isLight(idx) ? 'Board__spaceLight' : 'Board__spaceDark'}`,
+                        `${isKing(idx) ? isLightPiece(idx) ? 'Board__king-light' : 'Board__king-dark' : '' }`,
+                        `${isQueen(idx) ? isLightPiece(idx) ? 'Board__queen-light' : 'Board__queen-dark' : '' }`,
+                        `${isBishop(idx) ? isLightPiece(idx) ? 'Board__bishop-light' : 'Board__bishop-dark' : '' }`,
+                        `${isKnight(idx) ? isLightPiece(idx) ? 'Board__knight-light' : 'Board__knight-dark' : '' }`,
+                        `${isRook(idx) ? isLightPiece(idx) ? 'Board__rook-light' : 'Board__rook-dark' : '' }`,
+                        `${isPawn(idx) ? isLightPiece(idx) ? 'Board__pawn-light' : 'Board__pawn-dark' : '' }`,
+                        `${isSelected(idx) && 'Board__Selected'}`,
+                        `${isAvailableMove(idx) && 'Board__AvailableMove'}`,
+                        `${isKillingMove(idx) && 'Board__KillingMove'}`
+                    ].join(" ")}
+                    onClick={() => HandlePieceClick(idx)}>{idx}</div>)
+                })}
+            </div>
         </div>
     )
 }
