@@ -14,9 +14,6 @@
     -webkit-user-select: none;
     border: solid 1px black;
 }
-.Board__space:hover{
-    transform: scale(1.01);
-}
 
 .Board__spaceLight{
     background-color: #D8DEE9;
