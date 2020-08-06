@@ -32,6 +32,7 @@ export const HandleMoves = (piece:IPosition,board:IPosition[]):number[] => {
     if(piece.piece === Piece.Bishop) moves = BishopMoves(piece.index,board) 
     if(piece.piece === Piece.Queen) moves = moves.concat(BishopMoves(piece.index,board)).concat(RookMoves(piece.index,board)) 
     if(piece.piece === Piece.King) moves = KingMoves(piece.index,board)
+    if(piece.piece === Piece.Pawn) moves = PawnMoves(piece.index,board)
     return moves
 }
 
@@ -155,4 +156,49 @@ export const KingMoves = (idx:number, board:IPosition[]):number[] => {
     //Remove check moves
 
     return moves.filter(m => board[m].color !== board[idx].color)
+}
+
+export const PawnMoves = (idx:number, board:IPosition[]):number[] => {
+    const row = GetRow(idx)
+    const col = GetCol(idx)      
+    const moves:number[] = []
+
+    if(board[idx].color === Color.Light){
+        if(row > -1 && board[GetIdxByRowCol(row-1,col)].piece === Piece.Empty) moves.push(GetIdxByRowCol(row-1,col))
+        if(board[idx].firstMove && 
+            board[GetIdxByRowCol(row-1,col)].piece === Piece.Empty &&
+            board[GetIdxByRowCol(row-2,col)].piece === Piece.Empty){
+                moves.push(GetIdxByRowCol(row-2,col))
+            }
+        if(board[GetIdxByRowCol(row-1,col-1)].piece !== Piece.Empty &&
+            board[GetIdxByRowCol(row-1,col-1)].color !== Color.Light){
+                moves.push(GetIdxByRowCol(row-1,col-1))
+            }
+        if(board[GetIdxByRowCol(row-1,col+1)].piece !== Piece.Empty &&
+            board[GetIdxByRowCol(row-1,col+1)].color !== Color.Light){
+                moves.push(GetIdxByRowCol(row-1,col+1))
+            } 
+    }
+    else{
+        if(row < 8 && board[GetIdxByRowCol(row+1,col)].piece === Piece.Empty) moves.push(GetIdxByRowCol(row+1,col))
+        if(board[idx].firstMove && 
+            board[GetIdxByRowCol(row+1,col)].piece === Piece.Empty &&
+            board[GetIdxByRowCol(row+2,col)].piece === Piece.Empty){
+                moves.push(GetIdxByRowCol(row+2,col))
+            } 
+        if(board[GetIdxByRowCol(row+1,col-1)].piece !== Piece.Empty &&
+            board[GetIdxByRowCol(row+1,col-1)].color !== Color.Dark){
+                moves.push(GetIdxByRowCol(row+1,col-1))
+            }
+        if(board[GetIdxByRowCol(row+1,col+1)].piece !== Piece.Empty &&
+            board[GetIdxByRowCol(row+1,col+1)].color !== Color.Dark){
+                moves.push(GetIdxByRowCol(row+1,col+1))
+            } 
+    }
+
+
+
+    //en passant
+
+    return moves
 }

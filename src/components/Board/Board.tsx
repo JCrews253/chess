@@ -46,8 +46,7 @@ const Board = () => {
         for(let i=53; i<56; i++) newBoard[i] = {piece: Piece.Pawn, color: Color.Light, firstMove: true, index: i}
         return newBoard
     }
-    const HandlePieceClick = (idx:number) => {
-        console.log(board[idx])
+    const HandlePieceClick = (idx:number) => {    
         if(CheckForCheck() && board[idx].piece !== Piece.King && board[idx].color === turn){
             alert('in check')
         }
@@ -55,7 +54,8 @@ const Board = () => {
             const newBoard = [...board]
             newBoard[idx] ={
                 ...board[selected],
-                index:idx
+                index:idx,
+                firstMove: false
             } 
             newBoard[selected] = {
                 piece: Piece.Empty,
@@ -77,7 +77,6 @@ const Board = () => {
         var kingIndex = -1
         var inCheck = false
         board.forEach( s => { if(s.piece === Piece.King && turn === s.color) kingIndex = s.index })
-        console.log(kingIndex)
         board.forEach( s => {
             if(s.piece !== Piece.Empty && s.color !== turn){
                 const moves = HandleMoves(s,board)
@@ -86,17 +85,49 @@ const Board = () => {
         })
         return inCheck
     }
+    const CheckForWin = () => {
+        var lightKing = false
+        var darkKing = false
+        board.forEach(s => {
+            if(s.piece === Piece.King) (s.color === Color.Light) ? lightKing = true : darkKing = true
+        })
+        if(lightKing === false) {
+            alert("Dark has won")
+            setGameOver(true)
+        }
+        else if(darkKing === false){
+            alert("Light has won")
+            setGameOver(true)
+        } 
+        
+    }
 
     const[board,setBoard] = useState( () => InitializeBoard())
     const[turn,setTurn] = useState(Color.Light)
     const[selected,SetSelected] = useState(-1)
     const[availableMoves, setAvailableMoves] = useState([-1])
     const[killingMoves,setKillingMoves] = useState([-1])
+    const[gameOver,setGameOver] = useState(false)
 
+    useEffect( () => {
+        const kMoves:number[] =[]
+        board.forEach( s => {
+            if(s.piece !== Piece.Empty && s.color !== turn){
+                if(availableMoves.includes(s.index)) kMoves.push(s.index)
+            }
+        })
+        setKillingMoves(kMoves)
+    }, [availableMoves])
 
     useEffect( () => {
         if(turn === Color.Dark) Simulate(board,3,Color.Dark)
     },[turn])
+
+    useEffect(() => CheckForWin())
+    useEffect(() => {
+        setBoard(InitializeBoard())
+        setGameOver(false)
+    },[gameOver])
 
     return(
         <div className='Board__container'>
