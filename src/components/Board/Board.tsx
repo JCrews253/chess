@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import './Board.css'
 import { Piece, IPosition, Color, HandleMoves } from '../piece/piece'
-import { Simulate } from '../simulation/simulation'
-
-
+import { Simulate, Move } from '../simulation/simulation'
 
 const Board = () => {
     const GetRow = (idx:number):number => Math.floor( idx / 8 )
@@ -47,10 +45,7 @@ const Board = () => {
         return newBoard
     }
     const HandlePieceClick = (idx:number) => {    
-        if(CheckForCheck() && board[idx].piece !== Piece.King && board[idx].color === turn){
-            alert('in check')
-        }
-        else if(availableMoves.includes(idx)){
+        if(availableMoves.includes(idx)){
             const newBoard = [...board]
             newBoard[idx] ={
                 ...board[selected],
@@ -63,8 +58,10 @@ const Board = () => {
                 index: selected,
                 firstMove: false
             }
+            SetSelected(idx)
             setBoard(newBoard)
             setAvailableMoves([])
+            setKillingMoves([])
             SwapTurns()
         }
         else{
@@ -72,18 +69,6 @@ const Board = () => {
             if(board[idx].color === turn) setAvailableMoves(HandleMoves(board[idx],board))
             else setAvailableMoves([])
         }
-    }
-    const CheckForCheck = ():boolean => {
-        var kingIndex = -1
-        var inCheck = false
-        board.forEach( s => { if(s.piece === Piece.King && turn === s.color) kingIndex = s.index })
-        board.forEach( s => {
-            if(s.piece !== Piece.Empty && s.color !== turn){
-                const moves = HandleMoves(s,board)
-                if(moves.includes(kingIndex)) inCheck = true
-            }
-        })
-        return inCheck
     }
     const CheckForWin = () => {
         var lightKing = false
@@ -98,8 +83,23 @@ const Board = () => {
         else if(darkKing === false){
             alert("Light has won")
             setGameOver(true)
-        } 
-        
+        }  
+    }
+    const MakeAiMove = (move:Move) => {
+        const newBoard = [...board]
+        newBoard[move.end] = {
+            ...newBoard[move.start],
+            firstMove: false,
+            index: move.end
+        }
+        newBoard[move.start] = {
+            piece: Piece.Empty,
+            color: Color.None,
+            firstMove: false,
+            index: move.start
+        }
+        setBoard(newBoard)
+        SwapTurns()
     }
 
     const[board,setBoard] = useState( () => InitializeBoard())
@@ -118,11 +118,9 @@ const Board = () => {
         })
         setKillingMoves(kMoves)
     }, [availableMoves])
-
     useEffect( () => {
-        if(turn === Color.Dark) Simulate(board,3,Color.Dark)
+        if(turn === Color.Dark) MakeAiMove(Simulate(board,3,Color.Dark))
     },[turn])
-
     useEffect(() => CheckForWin())
     useEffect(() => {
         setBoard(InitializeBoard())
