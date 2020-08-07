@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react'
 import './Board.css'
 import { Piece, IPosition, Color, HandleMoves } from '../piece/piece'
 import { Simulate, Move } from '../simulation/simulation'
+import Popup from 'reactjs-popup'
 
 const Board = () => {
     const GetRow = (idx:number):number => Math.floor( idx / 8 )
     const GetCol = (idx:number):number => idx >= 8 ? idx % 8 : idx
-    const GetIdxByRowCol = (row:number,col:number):number => 8*row + col
     const isLight = (idx:number) => ( GetRow(idx) % 2 ) === (GetCol(idx) % 2)
     const isLightPiece = (idx:number) => board[idx].color === Color.Light 
     const isKing = (idx:number) =>  board[idx].piece === Piece.King
@@ -41,7 +41,7 @@ const Board = () => {
         newBoard[61] = {piece: Piece.Bishop, color: Color.Light, firstMove: true, index: 61}
         newBoard[62] = {piece: Piece.Knight, color: Color.Light, firstMove: true, index: 62}
         newBoard[63] = {piece: Piece.Rook, color: Color.Light, firstMove: true, index: 63}
-        for(let i=53; i<56; i++) newBoard[i] = {piece: Piece.Pawn, color: Color.Light, firstMove: true, index: i}
+        for(let i=48; i<56; i++) newBoard[i] = {piece: Piece.Pawn, color: Color.Light, firstMove: true, index: i}
         return newBoard
     }
     const HandlePieceClick = (idx:number) => {    
@@ -78,10 +78,12 @@ const Board = () => {
         })
         if(lightKing === false) {
             alert("Dark has won")
+            ShowPopUp()
             setGameOver(true)
         }
         else if(darkKing === false){
             alert("Light has won")
+            ShowPopUp()
             setGameOver(true)
         }  
     }
@@ -101,6 +103,13 @@ const Board = () => {
         setBoard(newBoard)
         SwapTurns()
     }
+    const ShowPopUp = () => (
+        <Popup position='center center'>
+            <div>
+                <h1>This is my popup</h1>
+            </div>
+        </Popup>
+    )
 
     const[board,setBoard] = useState( () => InitializeBoard())
     const[turn,setTurn] = useState(Color.Light)
