@@ -9,10 +9,10 @@
 }
 
 .Board__space{
-    height: 5em;
-    width: 5em;
     -webkit-user-select: none;
     border: solid 1px black;
+    width: 6em;
+    height: 6em;
 }
 
 .Board__spaceLight{

@@ -1,4 +1,7 @@
-.Header{
+.Header__container{
     background-color: #4C566A;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 70px;
 }

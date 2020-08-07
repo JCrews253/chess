@@ -127,7 +127,7 @@ const Board = () => {
         })
         setKillingMoves(kMoves)
     }, [availableMoves])
-    useEffect( () => {
+    useEffect(() => {
         if(turn === Color.Dark) MakeAiMove(Simulate(board,3,Color.Dark))
     },[turn])
     useEffect(() => CheckForWin())
