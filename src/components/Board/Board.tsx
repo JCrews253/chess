@@ -58,7 +58,7 @@ const Board = () => {
                 index: selected,
                 firstMove: false
             }
-            SetSelected(idx)
+            SetSelected(-1)
             setBoard(newBoard)
             setAvailableMoves([])
             setKillingMoves([])
@@ -100,6 +100,7 @@ const Board = () => {
             firstMove: false,
             index: move.start
         }
+        setAiMovePosition(move.end)
         setBoard(newBoard)
         SwapTurns()
     }
@@ -117,6 +118,7 @@ const Board = () => {
     const[availableMoves, setAvailableMoves] = useState([-1])
     const[killingMoves,setKillingMoves] = useState([-1])
     const[gameOver,setGameOver] = useState(false)
+    const[aiMovePosition,setAiMovePosition] = useState(-1)
 
     useEffect( () => {
         const kMoves:number[] =[]
@@ -159,7 +161,8 @@ const Board = () => {
                         `${isPawn(idx) ? isLightPiece(idx) ? 'Board__pawn-light' : 'Board__pawn-dark' : '' }`,`
                         ${isSelected(idx) && 'Board__Selected'}`,
                         `${isAvailableMove(idx) && 'Board__AvailableMove'}`,
-                        `${isKillingMove(idx) && 'Board__KillingMove'}`
+                        `${isKillingMove(idx) && 'Board__KillingMove'}`,
+                        `${idx === aiMovePosition && 'Board__AiMovePosition'}`
                     ].join(" ")}
                     onClick={() => HandlePieceClick(idx)}
                     key={idx}>{idx}</div>)

@@ -79,3 +79,6 @@
 .Board__KillingMove{
     background-color: #BF616A;
 }
+.Board__AiMovePosition{
+    background-color: #EBCB8B;
+}
