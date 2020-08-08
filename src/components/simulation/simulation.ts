@@ -5,6 +5,8 @@ export interface Move{
     end: number
 }
 
+export var boardsChecked:number = 0
+
 const KingPoints = 900
 const QueenPoints = 90
 const BishopPoints = 30
@@ -91,14 +93,18 @@ const LKingPosPoints = [
 const DKingPosPoints = reverseArray(LKingPosPoints);
 
 
-export const Simulate = (board:IPosition[], depth:number, color:Color):Move => {
+export const Simulate = async (board:IPosition[], depth:number, color:Color):Promise<Move> => {
+    boardsChecked = 0
     var cloneBoard:IPosition[] = JSON.parse(JSON.stringify(board))
     var bestScore = -Infinity
     var bestMove:Move = {start:-1,end:-1}
+    var alpha:number = -Infinity
+    var beta:number = Infinity
     const pieces:IPosition[] = cloneBoard.filter( s => s.color === color)
     pieces.forEach( p => {
         const moves = HandleMoves(p,cloneBoard)
         moves.forEach( m => {
+            boardsChecked++
             cloneBoard[m] = {
                 piece: cloneBoard[p.index].piece,
                 color: cloneBoard[p.index].color,
@@ -111,7 +117,7 @@ export const Simulate = (board:IPosition[], depth:number, color:Color):Move => {
                 index: p.index,
                 firstMove:false
             }
-            var score = MinMax(cloneBoard,depth-1, color === Color.Light ? Color.Dark : Color.Light, false)
+            var score = MinMax(cloneBoard,depth-1, color === Color.Light ? Color.Dark : Color.Light, false, alpha,beta)
             if(score > bestScore){  
                 bestScore = score
                 bestMove = {
@@ -122,10 +128,11 @@ export const Simulate = (board:IPosition[], depth:number, color:Color):Move => {
             cloneBoard = JSON.parse(JSON.stringify(board))
         })
     })
+    console.log(boardsChecked)
     return bestMove
 }
 
-export const MinMax = (board:IPosition[], depth:number, color:Color, isMaximizing:boolean):number => {
+export const MinMax = (board:IPosition[], depth:number, color:Color, isMaximizing:boolean,alpha:number, beta:number):number => {
     //Make a copy of the board
     var cloneBoard:IPosition[] = JSON.parse(JSON.stringify(board))
     //if the depth reaches the end return the score of the current board
@@ -137,6 +144,7 @@ export const MinMax = (board:IPosition[], depth:number, color:Color, isMaximizin
     pieces.forEach( p => {
         const moves = HandleMoves(p,cloneBoard)
         moves.forEach( m => {
+            boardsChecked++
             cloneBoard[m] = {
                 piece: cloneBoard[p.index].piece,
                 color: cloneBoard[p.index].color,
@@ -149,7 +157,7 @@ export const MinMax = (board:IPosition[], depth:number, color:Color, isMaximizin
                 index: p.index,
                 firstMove:false
             }
-            var score = MinMax(cloneBoard,depth-1, color === Color.Light ? Color.Dark : Color.Light, isMaximizing ? false : true)       
+            var score = MinMax(cloneBoard,depth-1, color === Color.Light ? Color.Dark : Color.Light, isMaximizing ? false : true,alpha,beta)       
             if(isMaximizing ? score > bestScore : score < bestScore){
                 bestScore = score
                 bestMove = {

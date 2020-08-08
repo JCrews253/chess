@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import './Board.css'
 import { Piece, IPosition, Color, HandleMoves } from '../piece/piece'
-import { Simulate, Move } from '../simulation/simulation'
+import { Simulate, Move, boardsChecked } from '../simulation/simulation'
 import Popup from 'reactjs-popup'
 
 const Board = () => {
@@ -128,8 +128,15 @@ const Board = () => {
         setKillingMoves(kMoves)
     }, [availableMoves])
     useEffect(() => {
-        if(turn === Color.Dark) MakeAiMove(Simulate(board,3,Color.Dark))
+        const GetMove = async () => {
+            if(turn === Color.Dark){
+                const move = await Simulate(board,3,Color.Dark)
+                MakeAiMove(move)
+            }
+        }
+        GetMove()
     },[turn])
+
     useEffect(() => CheckForWin())
     useEffect(() => {
         setBoard(InitializeBoard())
@@ -158,6 +165,7 @@ const Board = () => {
                     key={idx}>{idx}</div>)
                 })}
             </div>
+            <h1>Number of boards evaluated: {boardsChecked}</h1>
         </div>
     )
 }
