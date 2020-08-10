@@ -153,12 +153,12 @@ const Board = () => {
                         `${isBishop(idx) ? isLightPiece(idx) ? 'Board__bishop-light' : 'Board__bishop-dark' : '' }`,
                         `${isKnight(idx) ? isLightPiece(idx) ? 'Board__knight-light' : 'Board__knight-dark' : '' }`,
                         `${isRook(idx) ? isLightPiece(idx) ? 'Board__rook-light' : 'Board__rook-dark' : '' }`,
-                        `${isPawn(idx) ? isLightPiece(idx) ? 'Board__pawn-light' : 'Board__pawn-dark' : '' }`,`
-                        ${isSelected(idx) && 'Board__Selected'}`,
+                        `${isPawn(idx) ? isLightPiece(idx) ? 'Board__pawn-light' : 'Board__pawn-dark' : '' }`,
+                        `${isSelected(idx) && 'Board__Selected'}`,
                         `${isAvailableMove(idx) && 'Board__AvailableMove'}`,
                         `${isKillingMove(idx) && 'Board__KillingMove'}`,
-                        `${idx === aiMoveFinish && 'Board__AiMoveStart'}`,
-                        `${idx === aiMoveStart && 'Board__AiMoveFinish'}`
+                        `${idx === aiMoveStart && 'Board__AiMoveStart'}`,
+                        `${idx === aiMoveFinish && 'Board__AiMoveFinish'}`
                     ].join(" ")}
                     onClick={() => HandlePieceClick(idx)}
                     key={idx}>{idx}</div>)
