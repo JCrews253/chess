@@ -1,4 +1,4 @@
-import { IPosition, Color, Piece, HandleMoves} from "../piece/piece";
+import { IPosition, Color, Piece, HandleMoves, CheckForPromotion} from "../piece/piece";
 
 export interface Move{
     start: number,
@@ -111,6 +111,14 @@ export const Simulate = async (board:IPosition[], depth:number, color:Color):Pro
                 firstMove:false,
                 index: m,
             }
+            if(CheckForPromotion(m,cloneBoard)){
+                cloneBoard[m] = {
+                    piece: Piece.Queen,
+                    color: cloneBoard[p.index].color,
+                    index: m,
+                    firstMove:false,  
+                }
+            }
             cloneBoard[p.index] = {
                 piece: Piece.Empty,
                 color: Color.None,
@@ -128,7 +136,6 @@ export const Simulate = async (board:IPosition[], depth:number, color:Color):Pro
             cloneBoard = JSON.parse(JSON.stringify(board))
         })
     })
-    console.log(boardsChecked)
     return bestMove
 }
 
@@ -151,6 +158,14 @@ export const MinMax = (board:IPosition[], depth:number, color:Color, isMaximizin
                 index: m,
                 firstMove:false,  
             }
+            if(CheckForPromotion(m,cloneBoard)){
+                cloneBoard[m] = {
+                    piece: Piece.Queen,
+                    color: cloneBoard[p.index].color,
+                    index: m,
+                    firstMove:false,  
+                }
+            }
             cloneBoard[p.index] = {
                 piece: Piece.Empty,
                 color: Color.None,
@@ -168,19 +183,30 @@ export const MinMax = (board:IPosition[], depth:number, color:Color, isMaximizin
             cloneBoard = JSON.parse(JSON.stringify(board))
         })
     })
-    cloneBoard[bestMove.end] = {
-        piece: cloneBoard[bestMove.start].piece,
-        color: cloneBoard[bestMove.start].color,
-        index: bestMove.end,
-        firstMove:false,  
+    if(bestMove.start !== -1 && bestMove.end !== -1){
+        cloneBoard[bestMove.end] = {
+            piece: cloneBoard[bestMove.start].piece,
+            color: cloneBoard[bestMove.start].color,
+            index: bestMove.end,
+            firstMove:false,  
+        }
+        if(CheckForPromotion(bestMove.end,cloneBoard)){
+            cloneBoard[bestMove.end] = {
+                piece: Piece.Queen,
+                color: cloneBoard[bestMove.end].color,
+                index: bestMove.end,
+                firstMove:false,  
+            }
+        }
+        cloneBoard[bestMove.start] = {
+            piece: Piece.Empty,
+            color: Color.None,
+            index: bestMove.start,
+            firstMove:false
+        }
+        return CalcScore(cloneBoard)
     }
-    cloneBoard[bestMove.start] = {
-        piece: Piece.Empty,
-        color: Color.None,
-        index: bestMove.start,
-        firstMove:false
-    }
-    return CalcScore(cloneBoard)
+    else return  isMaximizing ? -Infinity : Infinity
 }
 
 const CalcScore = (board:IPosition[]):number => {

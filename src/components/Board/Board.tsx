@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import './Board.css'
-import { Piece, IPosition, Color, HandleMoves } from '../piece/piece'
+import { Piece, IPosition, Color, HandleMoves, CheckForPromotion } from '../piece/piece'
 import { Simulate, Move, boardsChecked } from '../simulation/simulation'
 
 const Board = () => {
@@ -31,7 +31,6 @@ const Board = () => {
         newBoard[7] = {piece: Piece.Rook, color: Color.Dark, firstMove: true, index: 7}
         for(let i=8; i<16; i++) newBoard[i] = {piece: Piece.Pawn, color: Color.Dark, firstMove: true, index: i}
 
-
         newBoard[56] = {piece: Piece.Rook, color: Color.Light, firstMove: true, index: 56}
         newBoard[57] = {piece: Piece.Knight, color: Color.Light, firstMove: true, index: 57}
         newBoard[58] = {piece: Piece.Bishop, color: Color.Light, firstMove: true, index: 58}
@@ -51,6 +50,14 @@ const Board = () => {
                 index:idx,
                 firstMove: false
             } 
+            if(CheckForPromotion(idx,newBoard)){
+                newBoard[idx] = {
+                    piece: Piece.Queen,
+                    color: board[selected].color,
+                    index: idx,
+                    firstMove:false,  
+                }
+            }
             newBoard[selected] = {
                 piece: Piece.Empty,
                 color: Color.None,
@@ -92,6 +99,14 @@ const Board = () => {
             ...newBoard[move.start],
             firstMove: false,
             index: move.end
+        }
+        if(CheckForPromotion(move.end,newBoard)){
+            newBoard[move.end] = {
+                piece: Piece.Queen,
+                color: newBoard[move.end].color,
+                index: move.end,
+                firstMove:false,  
+            }
         }
         newBoard[move.start] = {
             piece: Piece.Empty,

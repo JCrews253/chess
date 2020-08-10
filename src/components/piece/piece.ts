@@ -170,12 +170,12 @@ export const PawnMoves = (idx:number, board:IPosition[]):number[] => {
             board[GetIdxByRowCol(row-2,col)].piece === Piece.Empty){
                 moves.push(GetIdxByRowCol(row-2,col))
             }
-        if( col > 0 &&
+        if( col > 0 && row > 0 &&
             board[GetIdxByRowCol(row-1,col-1)].piece !== Piece.Empty &&
             board[GetIdxByRowCol(row-1,col-1)].color !== Color.Light){
                 moves.push(GetIdxByRowCol(row-1,col-1))
             }
-        if( col < 7 &&
+        if( col < 7 && row > 0 &&
             board[GetIdxByRowCol(row-1,col+1)].piece !== Piece.Empty &&
             board[GetIdxByRowCol(row-1,col+1)].color !== Color.Light){
                 moves.push(GetIdxByRowCol(row-1,col+1))
@@ -188,12 +188,12 @@ export const PawnMoves = (idx:number, board:IPosition[]):number[] => {
             board[GetIdxByRowCol(row+2,col)].piece === Piece.Empty){
                 moves.push(GetIdxByRowCol(row+2,col))
             } 
-        if(col > 0 &&
+        if(col > 0 && row < 7 &&
             board[GetIdxByRowCol(row+1,col-1)].piece !== Piece.Empty &&
             board[GetIdxByRowCol(row+1,col-1)].color !== Color.Dark){
                 moves.push(GetIdxByRowCol(row+1,col-1))
             }
-        if(col < 7 &&
+        if(col < 7 && row < 7 &&
             board[GetIdxByRowCol(row+1,col+1)].piece !== Piece.Empty &&
             board[GetIdxByRowCol(row+1,col+1)].color !== Color.Dark){
                 moves.push(GetIdxByRowCol(row+1,col+1))
@@ -205,4 +205,13 @@ export const PawnMoves = (idx:number, board:IPosition[]):number[] => {
     //en passant
 
     return moves
+}
+
+export const CheckForPromotion = (idx:number, board:IPosition[]):boolean => {
+    if(board[idx].piece === Piece.Pawn){
+        if(board[idx].color === Color.Light && idx < 8) return true
+        else if(board[idx].color === Color.Dark && idx > 55) return true
+        else return false
+    }
+    else return false
 }
