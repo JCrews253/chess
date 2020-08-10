@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react'
 import './Board.css'
 import { Piece, IPosition, Color, HandleMoves } from '../piece/piece'
 import { Simulate, Move, boardsChecked } from '../simulation/simulation'
-import Popup from 'reactjs-popup'
 
 const Board = () => {
     const GetRow = (idx:number):number => Math.floor( idx / 8 )
@@ -100,17 +99,12 @@ const Board = () => {
             firstMove: false,
             index: move.start
         }
-        setAiMovePosition(move.end)
+        setAiMoveStart(move.start)
+        setAiMoveFinish(move.end)
         setBoard(newBoard)
         SwapTurns()
     }
-    const ShowPopUp = () => (
-        <Popup position='center center'>
-            <div>
-                <h1>This is my popup</h1>
-            </div>
-        </Popup>
-    )
+    const ShowPopUp = () => 5
 
     const[board,setBoard] = useState( () => InitializeBoard())
     const[turn,setTurn] = useState(Color.Light)
@@ -118,7 +112,8 @@ const Board = () => {
     const[availableMoves, setAvailableMoves] = useState([-1])
     const[killingMoves,setKillingMoves] = useState([-1])
     const[gameOver,setGameOver] = useState(false)
-    const[aiMovePosition,setAiMovePosition] = useState(-1)
+    const[aiMoveStart,setAiMoveStart] = useState(-1)
+    const[aiMoveFinish,setAiMoveFinish] = useState(-1)
 
     useEffect( () => {
         const kMoves:number[] =[]
@@ -162,7 +157,8 @@ const Board = () => {
                         ${isSelected(idx) && 'Board__Selected'}`,
                         `${isAvailableMove(idx) && 'Board__AvailableMove'}`,
                         `${isKillingMove(idx) && 'Board__KillingMove'}`,
-                        `${idx === aiMovePosition && 'Board__AiMovePosition'}`
+                        `${idx === aiMoveFinish && 'Board__AiMoveStart'}`,
+                        `${idx === aiMoveStart && 'Board__AiMoveFinish'}`
                     ].join(" ")}
                     onClick={() => HandlePieceClick(idx)}
                     key={idx}>{idx}</div>)

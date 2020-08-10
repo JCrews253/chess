@@ -76,7 +76,10 @@
 .Board__AvailableMove{
     background-color: #5E81AC;
 }
-.Board__AiMovePosition{
+.Board__AiMoveStart{
+    background-color: #A3BE8C;
+}
+.Board__AiMoveFinish{
     background-color: #EBCB8B;
 }
 .Board__KillingMove{
