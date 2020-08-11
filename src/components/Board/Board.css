@@ -7,6 +7,9 @@
     grid-template-columns: repeat(8,auto);
     grid-template-rows: repeat(8,auto);
 }
+.Board__stats{
+    display: flex;
+}
 
 .Board__space{
     -webkit-user-select: none;

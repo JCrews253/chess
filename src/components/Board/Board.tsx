@@ -134,6 +134,32 @@ const Board = () => {
                 firstMove:false,  
             }
         }
+        else if(CheckForRightCastle(move.start,board) && move.end === move.start + 2){
+            newBoard[move.end-1] = {
+                ...newBoard[move.end+1],
+                index: move.end-1,
+                firstMove: false
+            }
+            newBoard[move.end+1] = {
+                piece: Piece.Empty,
+                color: Color.None,
+                index: move.end+1,
+                firstMove: false
+            }
+        }
+        else if(CheckForLeftCastle(move.start,board) && move.end === move.start - 2){
+            newBoard[move.end+1] = {
+                ...newBoard[move.end-2],
+                index: move.end+1,
+                firstMove: false
+            }
+            newBoard[move.end-2] = {
+                piece: Piece.Empty,
+                color: Color.None,
+                index: move.end-2,
+                firstMove: false
+            }
+        }
         newBoard[move.start] = {
             piece: Piece.Empty,
             color: Color.None,
@@ -174,7 +200,6 @@ const Board = () => {
         }
         GetMove()
     },[turn])
-
     useEffect(() => CheckForWin())
     useEffect(() => {
         setBoard(InitializeBoard())
@@ -205,7 +230,9 @@ const Board = () => {
                     key={idx}>{idx}</div>)
                 })}
             </div>
-            <h1>Number of boards evaluated: {boardsChecked}</h1>
+            <div className='Board__stats'>
+                <h1>Number of boards evaluated: {boardsChecked}</h1>
+            </div>
         </div>
     )
 }
