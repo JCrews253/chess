@@ -152,6 +152,13 @@ export const KingMoves = (idx:number, board:IPosition[]):number[] => {
     if(row > 0 && col > 0) moves.push(GetIdxByRowCol(row-1,col-1)) //up left
 
     //castling
+    if(CheckForRightCastle(idx,board)){
+        moves.push(GetIdxByRowCol(row,col+2))
+    }
+    if(CheckForLeftCastle(idx,board)){
+        moves.push(GetIdxByRowCol(row,col-2))
+    }
+
 
     //Remove check moves
 
@@ -211,6 +218,34 @@ export const CheckForPromotion = (idx:number, board:IPosition[]):boolean => {
     if(board[idx].piece === Piece.Pawn){
         if(board[idx].color === Color.Light && idx < 8) return true
         else if(board[idx].color === Color.Dark && idx > 55) return true
+        else return false
+    }
+    else return false
+}
+
+export const CheckForRightCastle = (idx:number, board:IPosition[]):boolean => {
+    if(board[idx].firstMove && board[idx].piece === Piece.King){
+        var rp = 1
+        while(board[idx+rp].piece === Piece.Empty && rp+GetCol(idx) < 7){
+            rp++
+        }
+        if(board[idx+rp].piece === Piece.Rook && board[idx].color === board[idx+rp].color && board[idx+rp].firstMove){
+            return true
+        }
+        else return false
+    }
+    else return false
+}
+
+export const CheckForLeftCastle = (idx:number, board:IPosition[]):boolean => {
+    if(board[idx].firstMove && board[idx].piece === Piece.King){
+        var lp = 1
+        while(board[idx-lp].piece === Piece.Empty && GetCol(idx)-lp > 0){
+            lp++
+        }
+        if(board[idx-lp].piece === Piece.Rook && board[idx].color === board[idx-lp].color && board[idx-lp].firstMove){
+            return true
+        }
         else return false
     }
     else return false

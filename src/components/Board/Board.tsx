@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import './Board.css'
-import { Piece, IPosition, Color, HandleMoves, CheckForPromotion } from '../piece/piece'
+import { Piece, IPosition, Color, HandleMoves, CheckForPromotion, CheckForRightCastle, CheckForLeftCastle } from '../piece/piece'
 import { Simulate, Move, boardsChecked } from '../simulation/simulation'
 
 const Board = () => {
@@ -56,6 +56,32 @@ const Board = () => {
                     color: board[selected].color,
                     index: idx,
                     firstMove:false,  
+                }
+            }
+            else if(CheckForRightCastle(selected,board) && idx === selected + 2){
+                newBoard[idx-1] = {
+                    ...newBoard[idx+1],
+                    index: idx-1,
+                    firstMove: false
+                }
+                newBoard[idx+1] = {
+                    piece: Piece.Empty,
+                    color: Color.None,
+                    index: idx+1,
+                    firstMove: false
+                }
+            }
+            else if(CheckForLeftCastle(selected,board) && idx === selected - 2){
+                newBoard[idx+1] = {
+                    ...newBoard[idx-2],
+                    index: idx+1,
+                    firstMove: false
+                }
+                newBoard[idx-2] = {
+                    piece: Piece.Empty,
+                    color: Color.None,
+                    index: idx-2,
+                    firstMove: false
                 }
             }
             newBoard[selected] = {
