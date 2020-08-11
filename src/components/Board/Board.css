@@ -70,17 +70,17 @@
     object-fit: contain;
 }
 
-.Board__Selected{
-    background-color: #88C0D0;
-}
-.Board__AvailableMove{
-    background-color: #5E81AC;
-}
 .Board__AiMoveStart{
     background-color: #A3BE8C;
 }
 .Board__AiMoveFinish{
     background-color: #EBCB8B;
+}
+.Board__Selected{
+    background-color: #88C0D0;
+}
+.Board__AvailableMove{
+    background-color: #5E81AC;
 }
 .Board__KillingMove{
     background-color: #BF616A;
