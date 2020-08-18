@@ -1,0 +1,18 @@
+.SideBar__container{
+    background-color: white;
+    width: 200px;
+    height: 818px;
+    margin-left: 10px;
+}
+
+.SideBar__moves{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.SideBar__move{
+    margin-top: 2px;
+    margin-right: 2px;
+    margin-left: 2px;
+}

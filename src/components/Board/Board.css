@@ -1,5 +1,4 @@
 .Board__container{
-    margin: auto;
 }
 .Board__gameboard{
     margin: auto;
@@ -14,8 +13,8 @@
 .Board__space{
     -webkit-user-select: none;
     border: solid 1px black;
-    width: 6em;
-    height: 6em;
+    width: 100px;
+    height: 100px;
 }
 
 .Board__spaceLight{

@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react'
 import './Board.css'
 import { Piece, IPosition, Color, HandleMoves, CheckForPromotion, CheckForRightCastle, CheckForLeftCastle } from '../piece/piece'
 import { Simulate, Move, boardsChecked } from '../simulation/simulation'
+import { useDispatch } from 'react-redux'
+import { GameMoves } from '../../Reducers/GameMoves/GameMovesAction'
 
 const Board = () => {
     const GetRow = (idx:number):number => Math.floor( idx / 8 )
@@ -90,6 +92,7 @@ const Board = () => {
                 index: selected,
                 firstMove: false
             }
+            CreateMoveNotation(selected,idx)
             SetSelected(-1)
             setBoard(newBoard)
             setAvailableMoves([])
@@ -168,9 +171,46 @@ const Board = () => {
         }
         setAiMoveStart(move.start)
         setAiMoveFinish(move.end)
+        CreateMoveNotation(move.start,move.end)
         setBoard(newBoard)
         SwapTurns()
     }
+    const dispatch = useDispatch()
+    const CreateMoveNotation = (start:number, end:number) => {
+        const movedPiece = PieceToChar(board[start].piece)
+        const endPos = IdxToAlphaNumeric(end)
+        var takenPiece = ""
+        if(board[end].piece !== Piece.Empty) takenPiece = "x"
+
+        const newBoard = [...board]
+        newBoard[end] = {
+            ...newBoard[start],
+            firstMove: false,
+            index: end
+        }
+
+        if(CheckForRightCastle(start,board) && end === start + 2 || 
+            CheckForLeftCastle(start,board) && end === start - 2){
+                dispatch(GameMoves("O-O","ADD_MOVE"))
+        }
+        else if(CheckForPromotion(end,newBoard)){
+            dispatch(GameMoves(movedPiece+"=Q","ADD_MOVE"))
+        }
+        else{
+            dispatch(GameMoves(movedPiece+takenPiece+endPos,"ADD_MOVE"))
+        }  
+    }
+    const PieceToChar = (piece:Piece):string => {
+        if(piece === Piece.King) return "K"
+        else if(piece === Piece.Queen) return "Q"
+        else if(piece === Piece.Bishop) return "B"
+        else if(piece === Piece.Knight) return "N"
+        else if(piece === Piece.Rook) return "R"
+        else if(piece === Piece.Pawn) return ""
+        else return ""
+    }
+    const IdxToAlphaNumeric = (idx:number):string => String.fromCharCode(97 + GetCol(idx)) + (8 - GetRow(idx))
+
     const ShowPopUp = () => 5
 
     const[board,setBoard] = useState( () => InitializeBoard())
@@ -229,7 +269,7 @@ const Board = () => {
                         `${idx === aiMoveFinish && 'Board__AiMoveFinish'}`
                     ].join(" ")}
                     onClick={() => HandlePieceClick(idx)}
-                    key={idx}>{idx}</div>)
+                    key={idx}>{IdxToAlphaNumeric(idx)}</div>)
                 })}
             </div>
             <div className='Board__stats'>
