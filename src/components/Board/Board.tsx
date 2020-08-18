@@ -108,12 +108,12 @@ const Board = () => {
         board.forEach(s => {
             if(s.piece === Piece.King) (s.color === Color.Light) ? lightKing = true : darkKing = true
         })
-        if(lightKing === false) {
+        if(!lightKing && !gameOver) {
             alert("Dark has won")
             ShowPopUp()
             setGameOver(true)
         }
-        else if(darkKing === false){
+        else if(!darkKing && !gameOver){
             alert("Light has won")
             ShowPopUp()
             setGameOver(true)
@@ -203,6 +203,8 @@ const Board = () => {
     useEffect(() => CheckForWin())
     useEffect(() => {
         setBoard(InitializeBoard())
+        setAiMoveStart(-1)
+        setAiMoveFinish(-1)
         setGameOver(false)
     },[gameOver])
 
