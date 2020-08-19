@@ -1,5 +1,3 @@
-import { type } from "os";
-
 export type addMove = {
     type: "ADD_MOVE",
     payload: string
@@ -10,7 +8,7 @@ export type clearMoves = {
     payload: string
 }
 
-export const GameMoves = (state:any, action:GameMoveActions):GameMoveDispatchTypes => ({
+export const GameMoves = (state:string, action:GameMoveActions):GameMoveDispatchTypes => ({
     type: action,
     payload: state
 })

@@ -245,6 +245,7 @@ const Board = () => {
         setBoard(InitializeBoard())
         setAiMoveStart(-1)
         setAiMoveFinish(-1)
+        dispatch(GameMoves(" ","CLEAR_MOVES"))
         setGameOver(false)
     },[gameOver])
 
@@ -271,9 +272,6 @@ const Board = () => {
                     onClick={() => HandlePieceClick(idx)}
                     key={idx}>{IdxToAlphaNumeric(idx)}</div>)
                 })}
-            </div>
-            <div className='Board__stats'>
-                <h1>Number of boards evaluated: {boardsChecked}</h1>
             </div>
         </div>
     )

@@ -1,18 +1,45 @@
 .SideBar__container{
-    background-color: white;
+    background-color: #2E3440;
     width: 200px;
-    height: 818px;
-    margin-left: 10px;
+    height: 812px;
+    margin-left: 5px;
+    border: solid 2px black;
 }
 
 .SideBar__moves{
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+    flex-direction: column;
+    overflow-y: scroll;
+    height: 92%;
+}
+::-webkit-scrollbar{
+    width: 0px;
+}
+::-webkit-scrollbar-thumb{
+    width: 10px;
+    height: 20px;
+    background:black
+}
+
+.SideBar__boards-checked{
+    font-size: large;
+    color: white;
+    text-align: center;
+    margin-bottom: 20px;
+    margin-top: 20px;
 }
 
 .SideBar__move{
-    margin-top: 2px;
-    margin-right: 2px;
-    margin-left: 2px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding-left: 10px;
+    padding-right: 20px;
+    width: fill;
+    font-size: larger;
+    color: white;
+    height: 30px;
+}
+.SideBar__move-light-background{
+    background-color: #4C566A;
 }

@@ -2,7 +2,7 @@ import { combineReducers, createStore } from "redux";
 import { GameMovesReducer } from "./Reducers/GameMoves/GameMovesReducer";
 
 const rootReducer = combineReducers({
-    moves: GameMovesReducer,
+    moves: GameMovesReducer
 })
 
 export type RootStore = ReturnType<typeof rootReducer>

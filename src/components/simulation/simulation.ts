@@ -92,7 +92,6 @@ const LKingPosPoints = [
 
 const DKingPosPoints = reverseArray(LKingPosPoints);
 
-
 export const Simulate = async (board:IPosition[], depth:number, color:Color):Promise<Move> => {
     boardsChecked = 0
     var cloneBoard:IPosition[] = JSON.parse(JSON.stringify(board))
